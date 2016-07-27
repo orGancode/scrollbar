@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Pure CSS Coke Can by Rom&aacute;n Cort&eacute;s</title>
+	<script type="text/javascript" src='http://cdn.bootcss.com/jquery/3.1.0/jquery.min.js'></script>
+	<style type="text/css">
+		#box{
+			position:relative;
+			top: 60px;
+			left: 30%;
+			height: 300px;
+			width: 500px;
+			border: 1px solid #ccc;
+		}
+		.container{
+			position: absolute;
+			top: 0;
+			left:0;
+			width: 460px;
+			height: 280px; 
+			overflow-y: hidden;
+			padding: 10px;
+
+		}
+		#scrollBox{
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 19px;
+			height: 100%;
+			border-left: 1px solid #ccc;
+			
+		}
+		#scroll{
+			position: relative;
+			top:0;
+			background-color: #999;
+			height: 80px;
+			width: 15px;
+			margin:0 auto;
+			cursor:pointer;
+		}
+		#text{
+			position: relative;
+		}
+		.select{
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="box">
+		<div id="container" class="container">
+			<div id='text'>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p> 
+				<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p> 
+				<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p> 
+				<p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p> 
+				<p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+				<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p> 
+				<p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.</p> 
+				<p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+				<p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p><br>
+			</div>
+		</div>
+		<div id="scrollBox">
+			<div id="scroll"></div>
+		</div>
+	</div>
+</body>
+<script>
+	$(function(){
+
+		var textD = getDom('text');
+		var conD = getDom('container');
+		var scrollBoxD = getDom('scrollBox');
+		var barD = getDom('scroll');
+		var boxD = getDom('box');
+		var top = parseInt($("#scroll").css("top"));//鼠标滚动了多少距离
+		var text_top = parseInt($("#text").css("top"));
+		var textH = textD.clientHeight;//文本内容所占的高
+		var conH = parseInt(window.getComputedStyle(conD,null).getPropertyValue('height'));//获取文本容器的高280px
+		var scrollH=scrollBoxD.clientHeight;//300
+		function getDom(id){
+			return document.getElementById(id);
+		}
+		//定义滚动
+		function scrollFunc(e){
+			e = e || window.event;
+			var wheel_data = 0;
+		    if(e.wheelDelta)//IE/Opera/Chrome
+		    	wheel_data = e.wheelDelta;
+		    else if(e.detail)//Firefox
+		    	wheel_data = e.detail;
+		    toScroll(wheel_data);
+		}
+		//上下滑
+		function toScroll(up_down){
+			top=parseInt($("#scroll").css("top"));
+			if(up_down > 0) 
+				up_down = -5;
+			else 
+				up_down = 5;
+			top += up_down;
+			text_top = -Math.floor((textH / scrollH) * top);
+			text_scroll(top,text_top);
+		}
+		function text_scroll(scr,text){
+			var tail = scrollH - parseInt($("#scroll").css('height'));
+			var text_tail = conH - textH;
+			if(scr >= tail) {
+				scr = tail;
+				text = text_tail;
+			}
+			if(scr<=0) {
+				scr = 0;
+				text = 0;
+			}
+			$("#scroll").css("top",scr+"px");
+			$("#text").css("top",text+"px");
+		}
+
+	//计算滚动条的高度,并设置
+	if(Math.floor(scrollH*conH / textH) < 20) 
+		barD.style.height = 20 + "px";
+	else 
+		barD.style.height = Math.floor(scrollH * conH / textH) + 'px';
+	//添加滚动事件监听
+	if(boxD.addEventListener){
+		boxD.addEventListener('DOMMouseScroll',scrollFunc,false);
+		}
+	//上下滚动
+	boxD.onmousewheel = scrollFunc;//IE/Opera/Chrome
+	//上下拖拽
+	$("#scroll").mousedown(function(e){
+		var moused = true;
+		var ev = e || window.event;
+		var start_y = ev.pageY - $('#scroll').offset().top;
+		$("#text").addClass('select');
+		$(document).mousemove(function(e){
+			var ev = e || window.event;
+			top = parseInt($("#scroll").css("top"));
+			text_top = -Math.floor((textH/scrollH) * top);
+			var cur_y = ev.pageY - start_y - $('#scroll').offset().top + top;
+			if(moused) 
+				text_scroll(cur_y,text_top);
+		});
+		$(document).mouseup(function(){
+			moused = false;
+			$("#text").removeClass('select');
+		});
+		
+	});
+	
+	scrollBoxD.onclick=function(e){
+		var ev = e || window.event;
+		var move = ev.pageY - $("#scrollBox").offset().top - $("#scroll").height() / 2;
+		if(move <=0)move=0;
+		if(move + $("#scroll").height() > scrollH) move = scrollH - $("#scroll").height();
+		var text_move = -textH*move / scrollH;
+		$("#scroll").css("top",move + "px");
+		$("#text").css("top",text_move + "px");
+	}
+
+})
+</script>
+</html>
